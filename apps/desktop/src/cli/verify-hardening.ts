@@ -27,8 +27,9 @@ import { PolicyEngine } from "../main/policy/engine.ts";
 import { validateHubAction } from "../main/electron/validate-action.ts";
 import type { SessionRecord } from "../main/session/manager.ts";
 import type { HubEvent } from "../../../../packages/shared-protocol/events.ts";
+import { REPO_ROOT } from "./test-root.ts";
 
-const REPO = "D:/agent/xuanwo";
+const REPO = REPO_ROOT;
 const results: Array<{ name: string; pass: boolean; detail: string }> = [];
 let failures = 0;
 

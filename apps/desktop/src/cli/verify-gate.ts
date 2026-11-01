@@ -10,8 +10,9 @@
 import { PolicyEngine, loadPack, listPacks, MINIMAL_SAFETY_PACK, rulesDir } from "../main/policy/engine.ts";
 import { ApprovalQueue, DenialTracker, approvalSignature } from "../main/approval/queue.ts";
 import type { ApprovalView } from "../../../../packages/shared-protocol/events.ts";
+import { REPO_ROOT } from "./test-root.ts";
 
-const ROOT = "D:/agent/xuanwo";
+const ROOT = REPO_ROOT;
 const results: Array<{ name: string; pass: boolean; detail: string }> = [];
 
 function check(name: string, pass: boolean, detail = ""): void {

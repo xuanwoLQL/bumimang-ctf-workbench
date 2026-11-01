@@ -35,8 +35,9 @@ import type {
   SessionView,
   TaskView,
 } from "../../../../packages/shared-protocol/events.ts";
+import { REPO_ROOT } from "./test-root.ts";
 
-const ROOT = "D:/agent/xuanwo";
+const ROOT = REPO_ROOT;
 const WORK = join(ROOT, ".ui-run", "r18");
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 const FAKE_AGENT = join(HERE, "fake-agent.ts");

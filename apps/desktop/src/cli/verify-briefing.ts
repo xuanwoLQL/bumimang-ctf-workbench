@@ -14,8 +14,9 @@ import { join } from "node:path";
 import { mkdirSync } from "node:fs";
 import { Blackboard } from "../main/blackboard/board.ts";
 import { buildBriefing, renderBriefingPrompt } from "../main/briefing/build.ts";
+import { REPO_ROOT } from "./test-root.ts";
 
-const ROOT = "D:/agent/xuanwo";
+const ROOT = REPO_ROOT;
 const WORK = join(ROOT, ".ui-run", "briefing");
 
 const results: Array<{ name: string; pass: boolean; detail: string }> = [];

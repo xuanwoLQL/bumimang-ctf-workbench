@@ -7,6 +7,7 @@ __pycache__/
 /dist-*/
 /.m1/
 /.ui-run/
+/.hugo-tools/
 /.probe/
 /.probe2/
 /_shots/

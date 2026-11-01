@@ -91,6 +91,7 @@ def validate_sizes() -> list[str]:
         if root.startswith("dist") or root in {
             ".m1",
             ".ui-run",
+            ".hugo-tools",
             "node_modules",
             "work",
             "evidence",

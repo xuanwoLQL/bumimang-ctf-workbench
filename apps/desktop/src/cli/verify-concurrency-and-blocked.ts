@@ -19,8 +19,9 @@ import { BoardBridge } from "../main/mcp-host/bridge.ts";
 import { PolicyEngine } from "../main/policy/engine.ts";
 import { ApprovalQueue, DenialTracker } from "../main/approval/queue.ts";
 import { SessionManager, newRunId } from "../main/session/manager.ts";
+import { REPO_ROOT } from "./test-root.ts";
 
-const ROOT = "D:/agent/xuanwo";
+const ROOT = REPO_ROOT;
 const WORK = join(ROOT, ".ui-run", "concurrency");
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 const FAKE_AGENT = join(HERE, "fake-agent.ts");

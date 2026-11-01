@@ -18,8 +18,9 @@ import { AcpClient } from "../main/acp/client.ts";
 import { PolicyEngine } from "../main/policy/engine.ts";
 import { ApprovalQueue } from "../main/approval/queue.ts";
 import type { ApprovalView } from "../../../../packages/shared-protocol/events.ts";
+import { REPO_ROOT } from "./test-root.ts";
 
-const ROOT = "D:/agent/xuanwo";
+const ROOT = REPO_ROOT;
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 const FAKE_AGENT = path.join(HERE, "fake-agent.ts");
 const WORK = path.join(ROOT, ".ui-run", "gate-live");

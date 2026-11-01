@@ -23,8 +23,9 @@ import { BRIDGE_RPC } from "../main/mcp-host/protocol.ts";
 import { EventBus, HubService } from "../main/hub/hub.ts";
 import { ApprovalQueue } from "../main/approval/queue.ts";
 import { buildBriefing } from "../main/briefing/build.ts";
+import { REPO_ROOT } from "./test-root.ts";
 
-const ROOT = "D:/agent/xuanwo";
+const ROOT = REPO_ROOT;
 const WORK = join(ROOT, ".ui-run", "history-verify");
 
 const results: Array<{ name: string; pass: boolean; detail: string }> = [];

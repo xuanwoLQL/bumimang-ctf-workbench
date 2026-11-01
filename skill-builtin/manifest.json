@@ -1,0 +1,32 @@
+{
+  "kind": "builtin-minimal",
+  "version": 1,
+  "generatedAt": "2026-10-25",
+  "sourceNote": "ctf-0day 为项目自有技能；ctf-solver 采用 MIT 编译许可（LICENSE 随包）。只收紧索引/路由/自有知识库，不包含第三方 WP 全文。",
+  "packages": [
+    "ctf-0day",
+    "ctf-solver"
+  ],
+  "fileCount": 107,
+  "totalBytes": 1357171,
+  "treeSha256": "1ae2222fdf86ebe9e0f3567aeffa26dccac673bb836a3f1088f5752a0a8e9073",
+  "includes": [
+    "skills/ctf-0day/SKILL.md",
+    "skills/ctf-0day/知识库/**",
+    "skills/ctf-0day/scripts/**（不含平台接口脚本 hbc.py/des_ctf_sync.py）",
+    "skills/ctf-solver/SKILL.md",
+    "skills/ctf-solver/AI-SEARCH-INDEX.md",
+    "skills/ctf-solver/PAYLOAD-CHEATSHEET.md",
+    "skills/ctf-solver/*.idx.md",
+    "skills/ctf-solver/CTF常用脚本及工具/SCRIPTS-INDEX.md",
+    "skills/ctf-solver/LICENSE"
+  ],
+  "excludes": [
+    "skills/ctf-solver/CTF大赛WP集合/**（第三方 WP 全文，未随内置包分发）",
+    "skills/ctf-solver/WP汇总/**",
+    "skills/ctf-solver/CTF常用脚本及工具/**/（脚本正文，仅保留索引）",
+    "skills/ctf-0day/外部参考/**（第三方 WP 索引/全文）",
+    "skills/ctf-0day/scripts/hbc.py（平台接口脚本）",
+    "skills/ctf-0day/scripts/des_ctf_sync.py（平台同步脚本）"
+  ]
+}

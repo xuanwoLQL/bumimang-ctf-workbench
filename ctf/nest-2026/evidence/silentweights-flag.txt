@@ -1,0 +1,11 @@
+Challenge: SilentWeights (Misc)
+Attachment SHA-256:
+70ad16bd8636dcce010376160094b29033aa0977567811d24e629be702670508
+
+Command:
+python ctf/nest-2026/scripts/silentweights/extract.py model.pt
+
+Output:
+tensor=fc2.weight
+shape=(32, 64)
+flag=flag{w31ghts_d0nt_l13_but_th3y_wh1sp3r}

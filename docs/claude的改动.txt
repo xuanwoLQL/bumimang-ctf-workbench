@@ -1,0 +1,300 @@
+  问题 1：权限确认过频，缺少一键放行
+
+  根因
+
+  ┌──────────────────────────────────────────────┬──────────────────────────────────────────────────────────────────┐
+  │                     位置                     │                               原因                               │
+  ├──────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────┤
+  │ apps/desktop/src/renderer/approval/approval. │ 待批卡只有「放行 / 放行并记住 /                                  │
+  │ ts:63-71                                     │ 拒绝」三个按钮，没有区分「本会话」「该                           │
+  │                                              │ agent」两种授权范围，也没有撤销入口。                            │
+  ├──────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────┤
+  │ apps/desktop/src/main/approval/queue.ts:143- │ decide(id, decision, remember) 虽然接收 remember                 │
+  │ 156                                          │ 参数，但没有把授权交给任何持久化或匹配逻辑，参数实际被丢弃。     │
+  ├──────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────┤
+  │ apps/desktop/src/main/policy/engine.ts:112-1 │ rememberAllow                                                    │
+  │ 23                                           │ 只把规则记在进程内存里，且是会话级；重启即失效，也无法按 agent   │
+  │                                              │ 区分。                                                           │
+  ├──────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────┤
+  │ 主进程审批路径                               │ onApprovalRequired 每次都会无条件调用 approvals.request()，没有  │
+  │                                              │ 「先查已有授权」这一步，所以同类操作必然重复弹窗。               │
+  └──────────────────────────────────────────────┴──────────────────────────────────────────────────────────────────┘
+
+  改了什么
+
+  - 新增配置 config/permissions.json：
+    - eligibleCategories: ["read", "write"] —— 默认可被记住的类别；
+    - highRiskCategories: ["execute", "delete", "credential", "network", "other"] —— 高风险类别，默认只能逐条放行；
+    - highRiskAllowlist: [] —— 高风险操作若确需纳入一键放行，必须在此写显式正则。
+  - 新增操作画像 apps/desktop/src/main/permission/profile.ts：
+    - 按 kind/title/command/rawInput 归类为 read/write/delete/execute/network/credential/other；
+    - 删除、凭据、执行命令等强制判为高风险；未知工具按 other fail closed；
+    - applyWorkRootBoundary()：文件写入若显式指向 <WORK_ROOT>/<taskId> 之外，强制高风险且不可记住。
+  - 新增授权存储 apps/desktop/src/main/permission/store.ts：
+    - 会话授权只存内存，会话停止/移除时清理；
+    - agent 授权写入 <workspace>/permissions.json（临时文件 + rename），重启后仍生效；
+    - 文件损坏时清空授权（fail closed），不做“猜恢复”；
+    - 匹配键为 agentId + category（会话授权再加 sessionId）。
+  - 主进程自动放行 apps/desktop/src/main/electron/main.ts:372：
+    - 在 approvals.request() 之前查 permissionStore.match(...)；命中直接返回 allow，不创建审批项；
+    - 每个「会话 + 授权」首次命中写一次 permission.auto_allowed 审计，避免刷屏。
+  - UI：
+    - approval.ts:84-120：四个按钮「放行 / 本会话始终允许 / 对该 agent 永久允许 / 拒绝」；
+    - 高风险默认禁用后两个按钮，并说明原因；若已在 highRiskAllowlist 中显式放行，则允许记住；
+    - 左栏新增每个 agent 的「授权 N」和统一的「授权管理」入口；
+    - apps/desktop/src/renderer/permission/grants.ts 列出全部授权，支持单条撤销和“撤销该 agent 全部授权”，并实时响应
+      permission.updated。
+  - 契约增量扩展：ApprovalView 增加 category/categoryLabel/highRisk/rememberable；HubAction.approval.decide 增加
+    rememberScope；新增 permission.revoke；快照增加 permissionGrants。
+
+  安全边界（明确说明）
+
+  - 默认情况下一键放行只覆盖 read/write。
+  - 执行任意命令、删除文件、凭据访问、网络访问、未知操作默认不可记住，必须逐条人工放行。
+  - 要把某类高风险操作纳入一键放行，只能在 config/permissions.json 的 highRiskAllowlist 里写显式正则；改完需重启。
+  - 文件写入另有路径边界：任务目录外的写入即使用户点“永久允许”也不会被记住。
+
+  验证
+
+  node apps/desktop/src/cli/verify-permissions.ts
+  # 28/28 通过：分类、白名单、跨重启持久化、agent 隔离、类别隔离、
+  # 同 agent 不同文件命中、会话作用域、高风险拒绝、单条/整 agent 撤销、路径边界
+
+  node apps/desktop/src/cli/verify-permission-autoallow.ts
+  # 12/12 通过：预授权 write → 真 ACP 请求直接 allow，approvalRequests=0；
+  # 同 agent 的 execute → 仍入队且 rememberable=false；重启后 write 授权仍在、execute 从未落盘
+  UI 侧 approval-verify 也断言了每张待批卡都有四个入口，结果为 ALL_PASS。
+
+  回归风险
+
+  - 授权粒度是“agent + 类别”，不是“具体命令/具体文件”；这是为了做到“同类不重复弹窗”，但意味着一次 write 授权会覆盖该
+    agent 在该任务工作目录内的所有写入。任务目录外的写入已被路径边界单独拦截。
+  - 永久授权存放在 %APPDATA%\bumimang\workspace\permissions.json，删除 workspace 或重置应用数据会丢失；agent 的 id
+    改名后旧授权不再命中。
+  - 配置在启动时读取，修改 permissions.json 后需要重启。
+  - 若 agent 的权限请求完全不携带路径/命令，路径边界无法判断，只能按标题分类；这是协议信息不足导致的“尽力而为”，不会因此
+    放宽高风险类别。
+
+  ---
+
+  问题 2：消息区自动滚到会话开头
+
+  根因
+
+  ┌──────────────────────────────────────────────────┬───────────────────────────────────────────────────────────────┐
+  │                       位置                       │                             原因                              │
+  ├──────────────────────────────────────────────────┼───────────────────────────────────────────────────────────────┤
+  │                                                  │ sync() 每次 store 更新都执行 clear(stage);                    │
+  │ apps/desktop/src/renderer/panes/panes.ts:539-543 │ stage.appendChild(frag)，把所有窗格根节点摘下再挂回。DOM      │
+  │                                                  │ 重新挂载会让每个 .pane-body 的 scrollTop                      │
+  │                                                  │ 归零，表现为“自动跳到会话开头”。                              │
+  ├──────────────────────────────────────────────────┼───────────────────────────────────────────────────────────────┤
+  │                                                  │ log.blocks 是累计的全部块（sink 最多保留 500                  │
+  │ 同一文件原有渲染逻辑                             │ 块），每次刷新全部渲染；没有“跟随/阅读历史”状态，也没有       │
+  │                                                  │ scroll 监听或“回到最新”按钮。                                 │
+  ├──────────────────────────────────────────────────┼───────────────────────────────────────────────────────────────┤
+  │ 标签栏                                           │ 每次 store 更新重建全部标签节点，进一步放大了重排开销。       │
+  └──────────────────────────────────────────────────┴───────────────────────────────────────────────────────────────┘
+
+  改了什么
+
+  - sync() 改为增量维护 DOM：只在顺序不对时 insertBefore，不再 clear(stage) 重挂；标签节点复用并原地更新。
+  - panes.ts:363 新增 renderBlockWindow()：
+    - 普通模式只渲染最后 CONV_WINDOW = 120 块；
+    - 用户上滚后进入 history 模式，用块 id 作为锚点，新消息只累加未读数，不改变滚动位置；
+    - 滚回底部或点「回到最新」后恢复 follow；
+    - 窗口前还有内容时顶部显示「加载更早的消息（还有 N 条）」，点击后按高度差补偿 scrollTop，视口不跳。
+  - 右下角新增「回到最新 · N 条新消息」浮层按钮，仅在非跟随状态显示。
+  - 样式增加 .pane-body-wrap、.pane-jump-latest、.conv-load-earlier，并给 .pane-body 加 contain: layout style
+    降低重排范围。
+  - tabs-verify.ts 增加窗口化/滚动/性能断言。
+
+  验证
+
+  node_modules/electron/dist/electron.exe apps/desktop/electron/tabs-verify.ts --no-sandbox
+  # ALL_PASS，关键证据：
+  # 窗口化渲染：220 个块只渲染最近 120 个（rendered=120）
+  # 执行中默认跟随到底部（top≈scrollHeight）
+  # 用户上滚后出现「回到最新」
+  # 阅读历史时新消息不改变滚动位置（before=0 after=0）
+  # 新消息累计到「回到最新」计数
+  # 点「回到最新」恢复跟随
+  # 点「加载更早」后视口保持
+
+  回归风险
+
+  - DOM 中不再保留全部历史，只保留 120 块；依赖“所有块都在 DOM 里”的脚本/截图需要改用「加载更早」或直接读
+    store。这是本次唯一有意的行为变更。
+  - “加载更早”按 120 块一页回退，极端长会话需要多次点击。
+  - 未读计数按“窗口末尾之后的新块数”计算；如果 sink 因上限截断更老的块，未读数不会把被截断的块算进去。
+
+  ---
+
+  问题 3：工作目录迁移
+
+  根因
+
+  apps/desktop/src/main/electron/main.ts:67-78：打包形态下默认 workdir 使用
+  path.join(app.getPath("userData"), "work")
+  即 C:\Users\Administrator\AppData\Roaming\bumimang\work。没有配置文件入口，也没有启动时自动创建和失败回落。
+
+  改了什么
+
+  - 新增配置 config/app.json：
+  { "version": 1, "workDir": "D:/agent/xuanwo/work" }
+  - 新增加载器 apps/desktop/src/main/config/loader.ts，解析优先级：
+    a. 环境变量 BUMIMANG_CONFIG / BUMIMANG_WORKDIR；
+    b. 打包后 <resources>/app-source/config；
+    c. 开发态 <repo>/config。
+       相对路径按配置文件所在目录解析，不硬编码绝对路径。
+  - main.ts:101 resolveWorkRoot()：BUMIMANG_WORKDIR → config/app.json 的 workDir → 开发态 <repo>/work / 打包态 exe 同级
+    work。
+  - main.ts:153 ensureWorkRoot()：启动时自动创建；创建失败回落到 <workspace>/work 并在 stderr 明确提示应修改
+    config/app.json 或设置 BUMIMANG_WORKDIR。
+  - package.json 的 extraResources 增加 config → app-source/config，打包版也走同一套配置。
+  - 其他路径引用：
+    - 会话记录、stream.jsonl、wire.jsonl、board.db、日志、permissions.json 仍在
+      %APPDATA%\bumimang\workspace，没有跟着搬；
+    - 只把 agent 的工作区根（产物目录）迁到 D:\agent\xuanwo\work；
+    - 每个任务的实际目录为 D:\agent\xuanwo\work\<taskId>，并继续通过 BUMIMANG_WORKDIR 传给 agent。
+  - 文档同步：work/README.md、使用方法.txt、renderer/first-run.ts 的数据位置说明。
+
+  旧数据是否需要迁移
+
+  - 不需要为了应用能跑而迁移：运行状态库/会话历史仍在原 workspace，旧会话记录不会丢。
+  - 旧 agent 产物不会自动搬：原先在 C:\Users\Administrator\AppData\Roaming\bumimang\work\
+    下的文件仍留在那里；新会话一律写入 D:\agent\xuanwo\work。
+  - 如需保留旧产物，手动复制即可：
+  Copy-Item "C:\Users\Administrator\AppData\Roaming\bumimang\work\*" "D:\agent\xuanwo\work\" -Recurse
+    不做自动迁移是有意的：避免启动时对未知大小的目录做同步拷贝，也避免覆盖用户已有文件。
+
+  验证
+
+  node apps/desktop/src/cli/verify-permissions.ts
+  # PASS 默认工作目录指向 D:/agent/xuanwo/work — D:\agent\xuanwo\work
+  打包后 dist/win-unpacked/resources/app-source/config/app.json 内容正确，启动日志显示加载的是
+  ...\resources\app-source\config\permissions.json；重新打包后的 不迷茫.exe --verify 为 20/20
+  通过（该模式使用临时验证根目录，属预期）。
+
+  回归风险
+
+  - 配置文件缺失或写坏时回落到内置路径；打包态的回落目录是 exe 同级的 work，不再是 %APPDATA%。
+  - 安装到只读目录时，修改 resources/app-source/config/app.json 可能需要管理员权限；可用 BUMIMANG_CONFIG
+    指向可写的用户配置。
+  - 配置只在启动时读取，修改后需重启。
+  - 旧目录不会自动清理，长期看会留下历史产物。
+
+  ---
+
+  问题 4：会话切换约 500ms 延迟
+
+  根因
+
+  代码中没有写死的 500ms setTimeout/debounce。实际延迟来自渲染路径：
+
+  1. panes.ts:539-543：每次 store 更新（包括点标签导致的选中态变化）都 clear(stage) 后重挂全部窗格，所有会话的对话 DOM
+     一起重新参与布局；
+  2. 每个会话一次性渲染累计的最多 500 个块，隐藏的标签页也不销毁；
+  3. 标签栏每次全量重建；
+  4. 切换标签时先移除再插入大段 DOM，浏览器必须同步完成布局，体感就是约 500ms。
+
+  改了什么
+
+  - 窗格不再重挂；selectTab() 同步更新标签高亮和 .pane-hidden 可见性，切换路径只做类名切换。
+  - 每个窗格只保留 120 块窗口，隐藏窗格不再持有全量 DOM。
+  - 标签节点复用，避免整条标签栏重建。
+  - 对话块节点复用：只有窗口末块会原地更新，其余块只创建一次。
+  - .pane-body 加 CSS containment，减少布局影响范围。
+  - 磁盘 IO 不在切换路径上：历史加载仍走原有 hub:history 异步路径，切换只读已加载的 sink。
+
+  验证
+
+  node_modules/electron/dist/electron.exe apps/desktop/electron/tabs-verify.ts --no-sandbox
+  # PASS 切回 120 块窗格的同步耗时 < 250ms（旧实现全量 DOM + 重挂约 500ms）
+  #      click→switch=6.2ms
+  同一次验收还验证了切回后对话块数不变、标记文本仍在（未重建、未丢历史）。
+
+  回归风险
+
+  - 与问题 2 相同：只保留 120 块窗口，更早内容需点「加载更早」。
+  - 性能数据来自受控快照（每会话 220 块）；真实 agent 的超长单块（巨大 diff/日志）仍可能拉高单次 patchBlock
+    成本，但不再随会话总数线性放大。
+  - 标签切换现在依赖 .pane-hidden 类名而非删除 DOM；若有外部样式覆盖 display，需要确认没有把隐藏窗格重新显示出来。
+
+  ---
+
+  改动文件清单
+
+  新增
+
+  - config/app.json
+  - config/permissions.json
+  - apps/desktop/src/main/config/loader.ts
+  - apps/desktop/src/main/permission/profile.ts
+  - apps/desktop/src/main/permission/store.ts
+  - apps/desktop/src/renderer/permission/grants.ts
+  - apps/desktop/src/cli/verify-permissions.ts
+  - apps/desktop/src/cli/verify-permission-autoallow.ts
+
+  修改
+
+  - apps/desktop/src/main/electron/main.ts
+  - apps/desktop/src/main/approval/queue.ts
+  - apps/desktop/src/main/hub/hub.ts
+  - apps/desktop/src/main/permission/*（新增文件如上）
+  - packages/shared-protocol/events.ts（仅增量字段/事件/动作）
+  - apps/desktop/src/renderer/approval/approval.ts
+  - apps/desktop/src/renderer/approval/model.ts
+  - apps/desktop/src/renderer/panes/panes.ts
+  - apps/desktop/src/renderer/main.ts
+  - apps/desktop/src/renderer/store.ts
+  - apps/desktop/src/renderer/contract.ts
+  - apps/desktop/src/renderer/mock/engine.ts
+  - apps/desktop/src/renderer/styles.css
+  - apps/desktop/electron/tabs-verify.ts
+  - apps/desktop/electron/approval-verify.ts
+  - apps/desktop/src/cli/fake-agent.ts
+  - package.json（extraResources 增加 config，新验收脚本）
+  - work/README.md、使用方法.txt、apps/desktop/src/renderer/first-run.ts
+
+  ---
+
+  验证汇总
+
+  ┌────────────────────────────────────────────────┬─────────────────────────────────────────────────────────────────┐
+  │                      验收                      │                              结果                               │
+  ├────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ npm run smoke（最终源码重跑）                  │ ALL PASS                                                        │
+  ├────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ verify-permissions.ts（最终源码重跑）          │ 28/28                                                           │
+  ├────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ verify-permission-autoallow.ts（最终源码重跑） │ 12/12                                                           │
+  ├────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ tabs-verify（最终源码重跑）                    │ ALL_PASS；220 块渲染 120；回到最新；click→switch 6.2ms          │
+  ├────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ approval-verify（最终源码重跑）                │ ALL_PASS；四按钮入口断言通过                                    │
+  ├────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ 全量回归（改动完成时）                         │ smoke 121 PASS、gate 52/52、gate-live 16/16、briefing           │
+  │                                                │ 17/17、concurrency 19/19、history 90/90、r18 139/139            │
+  ├────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ 打包版 不迷茫.exe --verify                     │ 20/20                                                           │
+  ├────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ npm run pack                                   │ 成功，产物时间 2026-10-21 11:11                                 │
+  └────────────────────────────────────────────────┴─────────────────────────────────────────────────────────────────┘
+
+  ▎ 说明：全量回归是在最后两处“文案/清理”改动之前跑的；这两处改动只影响高风险提示文案与未使用的
+  ▎ re-export，之后已重跑直接相关的 4 组验收（权限、自动放行、标签页、审批 UI）和 smoke，均通过。
+
+  ---
+
+  回归风险结论
+
+  1. 最高风险：窗口化渲染改变 DOM 事实 —— 任何依赖“全部历史消息都在 DOM 中”的外部脚本/测试需要改用「加载更早」或读
+     store。应用自身行为正确，且已验证阅读历史时滚动位置不动。
+  2. 高风险操作默认不可一键放行 —— 这是有意的安全边界，不是遗漏。需要放行必须在 config/permissions.json 的
+     highRiskAllowlist 写显式正则并重启。
+  3. 永久授权按 agent + 类别生效 —— 范围比“单条命令”宽；任务目录外的写入已用路径边界额外拦截。
+  4. 旧工作目录数据不自动迁移 —— 运行状态不受影响；旧产物需手动复制到 D:\agent\xuanwo\work。
+  5. 配置启动时读取 —— config/app.json、config/permissions.json 修改后需重启；打包版的配置在
+     resources/app-source/config，可用 BUMIMANG_CONFIG 覆盖。
+  6. 交付物需使用新包 —— dist\不迷茫 0.1.0.exe 与 dist\不迷茫 Setup 0.1.0.exe 已于 11:11 重新构建，旧包不含本次改动。

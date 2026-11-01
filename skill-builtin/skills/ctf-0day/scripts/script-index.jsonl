@@ -1,0 +1,5 @@
+{"name":"iphdr_matrix.py","relative_path":"skills/ctf-0day/scripts/iphdr_matrix.py","package":"ctf-0day","size":6628,"lines":152,"description":"IP 头/TTL 等网络特征矩阵分析辅助脚本。"}
+{"name":"react2shell.sh","relative_path":"skills/ctf-0day/scripts/react2shell.sh","package":"ctf-0day","size":3463,"lines":94,"description":"React2Shell 场景的授权靶场验证脚本（只读探测）。"}
+{"name":"selfcheck.ps1","relative_path":"skills/ctf-0day/scripts/selfcheck.ps1","package":"ctf-0day","size":8521,"lines":140,"description":"Windows 靶机基础自检（系统/权限/网络）只读脚本。"}
+{"name":"webbrute.py","relative_path":"skills/ctf-0day/scripts/webbrute.py","package":"ctf-0day","size":17376,"lines":367,"description":"Web 登录/参数爆破辅助脚本（多线程，需 Python 3）。"}
+{"name":"台账模板.md","relative_path":"skills/ctf-0day/scripts/台账模板.md","package":"ctf-0day","size":2391,"lines":65,"description":"比赛台账模板：命令、回显、证据等级、结论。"}

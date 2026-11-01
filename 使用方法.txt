@@ -1,0 +1,33 @@
+  ① 开发态(源码直跑,改代码用这个)
+
+  cd D:\agent\xuanwo
+  node_modules\electron\dist\electron.exe apps\desktop\src\main\electron\main.ts --no-sandbox
+
+  ② 打包态(实际用,推荐)——今天 19:28 刚重打包,含 Codex 评审修复 + 一键全权:
+
+  D:\agent\xuanwo\dist\不迷茫 0.1.0.exe
+
+  绿色包免安装、双击即跑;运行态数据落在 %APPDATA%\bumimang\；
+  agent 工作目录由 config\app.json 的 workDir 决定(默认 D:\agent\xuanwo\work)。
+
+  ③ 只想验证没坏(无头自检,26/26)
+
+  cd D:\agent\xuanwo
+  node_modules\electron\dist\electron.exe apps\desktop\src\main\electron\main.ts --no-sandbox --verify
+
+  起来之后的完整使用路径:
+
+  1. 左栏任务卡看当前题目(或点「＋ 新任务」填你的题);
+  2. 点「＋ 扇出会话」或引擎旁的「＋」→ 选 claude + guarded 档起会话;
+  3. 中栏标签页看实时流,右栏处理审批,黑板台账在右栏下方;
+  4. 点标签的「×」现在是真关标签(只隐藏,历史保留)。
+
+  不想逐条审批(一键全权):
+
+  - 扇出弹窗勾「全部放行」: 只对这次新建的会话生效;
+  - 审批卡上点「本会话全部允许」: 只对该会话生效;
+  - 审批面板右上「全局全部允许」: 对所有 agent / 所有会话生效,
+    写入 %APPDATA%\bumimang\permissions.json,重启后仍保留;
+    按钮会变成「关闭全局放行」,授权管理里也能撤销。
+  - 以上都只跳过人工审批;规则包里的硬阻断(block)与
+    agent 工作目录边界仍然生效。

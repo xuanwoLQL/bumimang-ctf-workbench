@@ -1,0 +1,6 @@
+NORTHSTAR CONFIDENTIAL TEST REPORT
+project=Roadrunner Collaboration
+report_id=rpt-042
+finding=legacy compressed-key validation diverges from curve membership
+recovery_token=flag{m3OqSILqXQDmrd5yHI98cgoQ6q3JZe6M4arDmaEa}
+END REPORT

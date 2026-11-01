@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self'"
+    />
+    <title>不迷茫 · CTF 多 Agent 解题工作台</title>
+    <link rel="stylesheet" href="./src/renderer/styles.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <!--
+      渲染进程入口。无 bundler：由 electron/renderer-protocol.ts 注册的自定义 scheme
+      在读取 .ts 时用 Node 25 的 module.stripTypeScriptTypes 现场剥类型后返回。
+      浏览器侧所有 import 均带 .ts 扩展名，类型再导出（import type）在剥类型后消失，
+      因此运行时完全自包含于 src/renderer/** 之下。
+    -->
+    <script type="module" src="./src/renderer/main.ts"></script>
+  </body>
+</html>

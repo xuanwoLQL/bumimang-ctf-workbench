@@ -1,0 +1,90 @@
+{
+  "id": "competition",
+  "name": "比赛合规包",
+  "description": "按当届比赛规则配置。架构不内置工具名单，具体限制由这个数据文件决定。",
+  "rules": [
+    {
+      "_comment": "置顶放行：黑板工具是内部状态，不涉及对外副作用。§5.1 约定 3 明确写了它不走审批。若不做这条，guarded 档的『无规则命中 → 转人工』会把每一次 blackboard_* 调用都拦成审批，直接把黑板同步打断（Lane B 实测发现）。放行仍全量留痕。注意用 tool_regex 而不是 text_regex：只认结构化工具名，避免 agent 在命令参数里塞工具名来伪造放行。",
+      "id": "blackboard-tools-are-internal",
+      "match": {
+        "action": "session/request_permission",
+        "tool_regex": "^(mcp[._]{1,2}blackboard[._]{1,2})?(blackboard[._])?(read_since|submit_fact|declare_dead_end|query_view|acquire_lease|release_lease|open_intent)$"
+      },
+      "verdict": "allow",
+      "reason": "黑板工具是内部状态，不走人工审批（§5.1 约定 3）"
+    },
+    {
+      "_comment": "P4-C：目标范围规则。只在 scope.enabled=true 时参与匹配；verdict 由 config/app.json 的 scope.outOfScopeAction 决定（默认 approve，不是 block）。inScope=unknown 也走这里：无法判定时交给 outOfScopeAction，而不是静默放行。",
+      "id": "no-out-of-scope",
+      "match": {
+        "out_of_scope": true
+      },
+      "verdict": "approve",
+      "reason": "目标不在任务授权范围内（denyTargets 或 targets 未包含）"
+    },
+    {
+      "id": "no-c2-tools",
+      "match": {
+        "action": "terminal/exec",
+        "command_regex": "(cobaltstrike|cobalt_strike|beacon\\.exe|sliver-server|sliver-client|empire-server)"
+      },
+      "verdict": "block",
+      "reason": "当届比赛规则禁止 C2 管理工具"
+    },
+    {
+      "_comment": "关键补充：实测三家 agent 都不发 terminal/exec，C2 命令是以 session/request_permission 进来的。只写上面那条等于没拦。",
+      "id": "no-c2-tools-via-permission",
+      "match": {
+        "action": "session/request_permission",
+        "text_regex": "(cobaltstrike|cobalt_strike|beacon\\.exe|sliver-server|sliver-client|empire-server|cs\\.jar|cs-client)"
+      },
+      "verdict": "block",
+      "reason": "当届比赛规则禁止 C2 管理工具（经权限请求通道）"
+    },
+    {
+      "id": "credential-actions-need-human",
+      "match": {
+        "action": "session/request_permission",
+        "text_regex": "(mimikatz|sekurlsa|logonpasswords|lsass|credential|passwords|hashdump)"
+      },
+      "verdict": "approve",
+      "reason": "凭据类动作需要人工放行"
+    },
+    {
+      "id": "write-outside-workspace-needs-human",
+      "match": {
+        "action": "session/request_permission",
+        "text_regex": "(rm -rf|format |diskpart|reg delete|del /f /s /q)"
+      },
+      "verdict": "approve",
+      "reason": "破坏性文件操作需要人工放行"
+    },
+    {
+      "id": "external-network-needs-human",
+      "match": {
+        "action": "session/request_permission",
+        "text_regex": "(curl|wget|nc |ncat|ssh |scp )"
+      },
+      "verdict": "approve",
+      "reason": "对外网络动作需要人工放行"
+    },
+    {
+      "id": "no-runtime-secret-access",
+      "match": {
+        "action": "terminal/exec",
+        "command_regex": "(AppData[\\\\/]+Roaming[\\\\/]+(bumimang|不迷茫)[\\\\/]+workspace|platform-state\\.json|platform-credentials\\.bin|board\\.db|\\.token|Webview2|Cookies)"
+      },
+      "verdict": "block",
+      "reason": "禁止从题目 Agent 读取应用运行态、平台 token、Cookie、凭据或其他任务数据"
+    },
+    {
+      "id": "no-runtime-secret-access-via-permission",
+      "match": {
+        "action": "session/request_permission",
+        "text_regex": "(AppData[\\\\/]+Roaming[\\\\/]+(bumimang|不迷茫)[\\\\/]+workspace|platform-state\\.json|platform-credentials\\.bin|board\\.db|Webview2|Cookies)"
+      },
+      "verdict": "block",
+      "reason": "禁止从题目 Agent 读取应用运行态与平台凭据"
+    }
+  ]
+}

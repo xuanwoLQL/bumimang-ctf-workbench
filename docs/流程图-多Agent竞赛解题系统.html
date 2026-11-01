@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>多 Agent 竞赛解题系统流程图</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@400&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --paper: #f5f5f5;
+    --ink: #2d3142;
+    --muted: #4f5d75;
+    --accent: #bf4520;
+    --link: #1f5f8b;
+  }
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Geist", "Noto Sans SC", sans-serif;
+  }
+  .frame { width: 100%; max-width: 1200px; }
+  .drawing-canvas { width: 100%; overflow-x: auto; }
+  .eyebrow {
+    margin-bottom: .5rem;
+    color: var(--muted);
+    font-family: "Geist Mono", monospace;
+    font-size: .66rem;
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+  }
+  h1 {
+    margin-bottom: .7rem;
+    font-family: "Instrument Serif", "Noto Serif", "Noto Serif SC", serif;
+    font-size: clamp(1.55rem, 2.5vw + .6rem, 2.15rem);
+    font-weight: 400;
+    letter-spacing: -.025em;
+    line-height: 1.15;
+  }
+  .lede {
+    max-width: 760px;
+    margin-bottom: 1.3rem;
+    color: var(--muted);
+    font-size: .82rem;
+    line-height: 1.7;
+  }
+  svg { display: block; width: 100%; min-width: 980px; }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.1rem;
+    margin-top: 1.2rem;
+    padding-top: .9rem;
+    border-top: 1px solid #d8d8d8;
+    color: var(--muted);
+    font: .66rem "Geist Mono", monospace;
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: .45rem; }
+  .swatch { width: 22px; height: 0; border-top: 1px solid var(--muted); }
+  .swatch.accent { border-color: var(--accent); }
+  .swatch.link { border-color: var(--link); }
+  .diamond-key {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 1px solid var(--ink);
+    background: #fff;
+    transform: rotate(45deg) scale(.72);
+  }
+</style>
+</head>
+<body>
+<main class="frame">
+  <div class="eyebrow">不迷茫 · 多 Agent 竞赛工作台</div>
+  <h1>从平台题目到 Flag 提交的解题闭环</h1>
+  <p class="lede">
+    平台同步负责提供题面、分值与实例；本地物化把附件和同类 WP 放入任务工作目录；四个 Agent
+    以不同角色并发推进，靠共享黑板收敛证据，最后由人确认后提交平台。
+  </p>
+  <div class="drawing-canvas">
+    <svg viewBox="0 0 980 920" role="img" aria-labelledby="agent-flow-title agent-flow-desc" xmlns="http://www.w3.org/2000/svg">
+      <title id="agent-flow-title">多 Agent 竞赛解题系统流程图</title>
+      <desc id="agent-flow-desc">从登录平台、同步题目、物化任务、四 Agent 并发、黑板收敛到人工确认并提交 Flag 的完整流程。</desc>
+      <defs>
+        <marker id="arrow-muted" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#4f5d75"/>
+        </marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#bf4520"/>
+        </marker>
+      </defs>
+
+      <rect x="0" y="0" width="980" height="920" fill="#f5f5f5"/>
+
+      <!-- 连线先画，节点后画，避免线穿过文字。 -->
+      <line x1="460" y1="66" x2="460" y2="102" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow-muted)"/>
+      <line x1="460" y1="160" x2="460" y2="194" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow-muted)"/>
+      <line x1="460" y1="258" x2="460" y2="292" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow-muted)"/>
+      <line x1="460" y1="382" x2="460" y2="400" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow-muted)"/>
+
+      <path d="M610 460 H790 Q798 460 798 452 V345 Q798 337 790 337 H718"
+            fill="none" stroke="#4f5d75" stroke-width="1" stroke-linejoin="round" marker-end="url(#arrow-muted)"/>
+
+      <line x1="460" y1="520" x2="460" y2="552" stroke="#bf4520" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+      <line x1="460" y1="618" x2="460" y2="640" stroke="#bf4520" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+      <line x1="310" y1="700" x2="250" y2="700" stroke="#4f5d75" stroke-width="1" marker-end="url(#arrow-muted)"/>
+      <path d="M610 700 H780 Q788 700 788 708 V836 Q788 844 780 844 H580"
+            fill="none" stroke="#bf4520" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arrow-accent)"/>
+
+      <!-- 节点 -->
+      <rect x="400" y="30" width="120" height="36" rx="18" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="460" y="53" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="13" font-weight="600" fill="#2d3142">开始</text>
+
+      <rect x="260" y="102" width="400" height="58" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="460" y="125" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="13" font-weight="600" fill="#2d3142">登录比赛平台并同步题目</text>
+      <text x="460" y="144" text-anchor="middle" font-family="'Geist Mono',monospace" font-size="9" fill="#4f5d75">DES 密文登录 · JWT 鉴权 · 分值 / 已解数 / 靶机状态</text>
+
+      <rect x="260" y="194" width="400" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="460" y="218" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="13" font-weight="600" fill="#2d3142">一键物化题目工作区</text>
+      <text x="460" y="237" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="10" fill="#4f5d75">建任务 · 下载附件 · 检索同类 WP · 登记靶机目标</text>
+      <text x="460" y="251" text-anchor="middle" font-family="'Geist Mono',monospace" font-size="8" fill="#1f5f8b">work/&lt;task-id&gt;/{attachments, reference/wp, evidence}</text>
+
+      <rect x="210" y="292" width="500" height="90" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="460" y="316" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="13" font-weight="600" fill="#2d3142">四个 Agent 并发解题</text>
+      <text x="460" y="336" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="10" fill="#4f5d75">输入同一份题面、WP 路径与黑板增量</text>
+      <rect x="260" y="349" width="88" height="20" rx="3" fill="#f5f5f5" stroke="#d5d5d5"/>
+      <text x="304" y="363" text-anchor="middle" font-family="'Geist Mono',monospace" font-size="8" fill="#2d3142">Codex · lead</text>
+      <rect x="356" y="349" width="94" height="20" rx="3" fill="#f5f5f5" stroke="#d5d5d5"/>
+      <text x="403" y="363" text-anchor="middle" font-family="'Geist Mono',monospace" font-size="8" fill="#2d3142">Claude · verify</text>
+      <rect x="458" y="349" width="110" height="20" rx="3" fill="#f5f5f5" stroke="#d5d5d5"/>
+      <text x="513" y="363" text-anchor="middle" font-family="'Geist Mono',monospace" font-size="8" fill="#2d3142">OpenCode · recon</text>
+      <rect x="576" y="349" width="86" height="20" rx="3" fill="#f5f5f5" stroke="#d5d5d5"/>
+      <text x="619" y="363" text-anchor="middle" font-family="'Geist Mono',monospace" font-size="8" fill="#2d3142">DSH · scribe</text>
+
+      <polygon points="460,400 610,460 460,520 310,460" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="460" y="456" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2d3142">黑板证据一致？</text>
+      <text x="460" y="474" text-anchor="middle" font-family="'Geist Mono',monospace" font-size="8" fill="#4f5d75">FACT / DEAD_END / LEASE</text>
+
+      <rect x="260" y="552" width="400" height="66" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="460" y="576" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="13" font-weight="600" fill="#2d3142">生成 Flag 候选与证据链</text>
+      <text x="460" y="595" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="10" fill="#4f5d75">候选去重 · witness 路径 · E0 / E1 / E2 分级</text>
+      <text x="460" y="609" text-anchor="middle" font-family="'Geist Mono',monospace" font-size="8" fill="#4f5d75">首个有效候选出现后自动收敛其余会话</text>
+
+      <polygon points="460,640 610,700 460,760 310,700" fill="rgba(191,69,32,0.06)" stroke="#bf4520" stroke-width="1.2"/>
+      <text x="460" y="696" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#bf4520">人工确认提交？</text>
+      <text x="460" y="714" text-anchor="middle" font-family="'Geist Mono',monospace" font-size="8" fill="#bf4520">HUMAN IN THE LOOP</text>
+
+      <rect x="60" y="678" width="190" height="44" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="155" y="697" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="11" font-weight="600" fill="#2d3142">保留候选，等待复核</text>
+      <text x="155" y="712" text-anchor="middle" font-family="'Geist Mono',monospace" font-size="8" fill="#4f5d75">NO SUBMIT</text>
+
+      <rect x="340" y="820" width="240" height="48" rx="24" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="460" y="842" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="13" font-weight="600" fill="#2d3142">平台接受，任务已解出</text>
+      <text x="460" y="858" text-anchor="middle" font-family="'Geist Mono',monospace" font-size="8" fill="#4f5d75">FLAG STORED · WP READY</text>
+
+      <!-- 分支标签：每个标签都有纸色遮罩，避免和连线粘连。 -->
+      <rect x="747" y="390" width="98" height="20" fill="#f5f5f5"/>
+      <text x="796" y="404" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="10" font-weight="600" fill="#4f5d75">否 · 补新假设</text>
+
+      <rect x="476" y="526" width="50" height="20" fill="#f5f5f5"/>
+      <text x="501" y="540" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="10" font-weight="600" fill="#bf4520">是</text>
+
+      <rect x="262" y="688" width="42" height="20" fill="#f5f5f5"/>
+      <text x="283" y="702" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="10" font-weight="600" fill="#4f5d75">否</text>
+
+      <rect x="620" y="780" width="42" height="20" fill="#f5f5f5"/>
+      <text x="641" y="794" text-anchor="middle" font-family="'Geist','Noto Sans SC',sans-serif" font-size="10" font-weight="600" fill="#bf4520">是</text>
+    </svg>
+  </div>
+  <div class="legend" aria-label="图例">
+    <span class="legend-item"><span class="swatch"></span>常规流程</span>
+    <span class="legend-item"><span class="swatch accent"></span>关键成功路径</span>
+    <span class="legend-item"><span class="diamond-key"></span>决策节点</span>
+    <span class="legend-item">所有平台写操作（提交 Flag）都需人工确认</span>
+  </div>
+</main>
+</body>
+</html>

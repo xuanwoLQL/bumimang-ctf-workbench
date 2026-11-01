@@ -1,0 +1,26 @@
+{
+ "aad": {
+  "classification": "internal-test",
+  "content_type": "text/plain; charset=utf-8",
+  "created_at": "2026-09-16T22:40:00Z"
+ },
+ "canonicalization": "UTF-8 JSON, sorted keys, separators=(',',':')",
+ "ciphertext": "et/RyuLjmrCtzXz103at2bgbDwqhFXQY4XHV+JJye2UwYpAFbv1QQTHAcMO+yFVOdwFMuDbCZIXyx77AmJOUmnyaYeARJkUdSXcV2sf6wtftwMOZkhe1cplUsm+8mf7Q9ygOLHkB7yYnhrApxNO5bRGxIS/RkVIF66GUWedLiGSjOWkILFF6s+aKMffPUVl2cAjRajCAdNi8H0IyMCcV8sYycI+ZXvbuHmbgmFpozuy9GaNX7yCOBnb4MEWIVAxF3SKGSnSuEaY6Cd/HVwH2w8Au1xYeeAEL2B/nnEppoJM8EKmIP8g4",
+ "content_type": "text/plain; charset=utf-8",
+ "encryption": {
+  "operation": "sealReport",
+  "sdk": "/sdk.js"
+ },
+ "id": "rpt-042",
+ "info": {
+  "key_version": "doc-kek-2026.09-v3",
+  "project_id": "prj-northstar",
+  "report_id": "rpt-042"
+ },
+ "key_version": "doc-kek-2026.09-v3",
+ "nonce": "1d6fe964198f692b27b823c8",
+ "profile": "NS-HPKE-DIAG-1 (HPKE-inspired teaching profile)",
+ "project_id": "prj-northstar",
+ "recipient_public_key": "02315f",
+ "tag": "79b538f1e5739ae244a186acec203dc1"
+}

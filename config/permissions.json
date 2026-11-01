@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "eligibleCategories": ["read", "write"],
+  "highRiskCategories": ["execute", "delete", "credential", "network", "other"],
+  "highRiskAllowlist": [],
+  "_comment": [
+    "eligibleCategories：允许被「本会话始终允许 / 对该 agent 永久允许」记住的操作类别。",
+    "highRiskCategories：默认禁止一键放行的高风险类别；仍可逐条人工放行。",
+    "highRiskAllowlist：确需把某类高风险动作纳入一键放行时，在这里写正则（匹配命令/标题）。",
+    "改动后重启应用生效。工作目录配置见同目录 app.json。"
+  ]
+}

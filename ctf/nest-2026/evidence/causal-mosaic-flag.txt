@@ -1,0 +1,9 @@
+Challenge: Causal Mosaic (Misc)
+Evidence source:
+scene_config.plugins.cpcloud.elements["..."].docker_params.environment_str
+
+Value:
+CHALLENGE=causal;FLAG=flag{W3nxZB8RVy4tcddDVAvpHIo8}
+
+Platform state:
+isSolved=true

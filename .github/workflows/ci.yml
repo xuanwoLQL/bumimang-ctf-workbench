@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Public-source secret audit
+        shell: pwsh
+        run: |
+          python release-tools/audit_public.py
+      - name: Public release checks
+        shell: pwsh
+        run: |
+          python release-tools/check_public.py
+      - name: Core gate
+        run: npm run verify:gate
+      - name: Renderer smoke
+        run: npm run smoke
+      - name: Answer detector
+        run: npm run verify:flags
+      - name: Concurrency and blocked handling
+        run: npm run verify:concurrency
+      - name: Hardening checks
+        run: npm run verify:hardening

@@ -1,0 +1,51 @@
+# Dependencies and generated packages
+/node_modules/
+/__pycache__/
+__pycache__/
+*.pyc
+/dist/
+/dist-*/
+/.m1/
+/.ui-run/
+/.probe/
+/.probe2/
+/_shots/
+
+# Runtime state and private evidence
+/work/
+/evidence/
+/docs/logs/
+/config/app.json
+/config/platform.json
+/config/ir-tools.json
+/config/platform-credentials.bin
+
+# Machine-local challenge data
+/benchmarks/challenges.local.json
+/.deploy.env
+/.deploy.env.*
+
+# Secrets and databases
+.env
+.env.*
+!.env.example
+*.db
+*.db-shm
+*.db-wal
+*.pem
+*.key
+*.pfx
+*.p12
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Keep the sanitized competition archive and its evidence public.
+!/ctf/nest-2026/evidence/
+!/ctf/nest-2026/evidence/**
+!/ctf/nest-2026/**/*.log

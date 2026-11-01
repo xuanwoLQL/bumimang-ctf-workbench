@@ -1,0 +1,16 @@
+{
+  "_comment": [
+    "V2.1b IR 工具配置模板（发行包只带本文件，不带开发机绝对路径）。",
+    "复制到用户级配置 %APPDATA%\\bumimang\\ir-tools.json（或设置 BUMIMANG_IR_TOOLS_CONFIG）后填写本机路径。",
+    "查找顺序：BUMIMANG_IR_TOOLS_CONFIG > userData/ir-tools.json > BUMIMANG_* 环境变量 > PATH。",
+    "留空的项会被跳过；显式填错路径会报 PATH_ERROR，不会静默回退。",
+    "示例：\"tshark\": \"C:/Program Files/Wireshark/tshark.exe\""
+  ],
+  "tshark": "",
+  "capinfos": "",
+  "text2pcap": "",
+  "evtxecmd": "",
+  "volatility": "",
+  "yaraPython": "",
+  "yaraScan": ""
+}

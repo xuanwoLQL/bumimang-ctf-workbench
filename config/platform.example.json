@@ -1,0 +1,15 @@
+{
+  "enabled": true,
+  "provider": "auto",
+  "baseUrl": "https://your-ctf-platform.example",
+  "raceId": "",
+  "username": "",
+  "teamName": "",
+  "desKey": "",
+  "insecureTls": false,
+  "autoConnect": false,
+  "autoSync": false,
+  "autoSubmit": false,
+  "syncIntervalSeconds": 30,
+  "wpDir": "../writeups"
+}

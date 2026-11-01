@@ -1,0 +1,444 @@
+{
+  "event": "第九届“强网”拟态防御国际精英挑战赛预选赛",
+  "generatedFrom": "不迷茫本地黑板与平台只读快照",
+  "race": {
+    "id": "570b5e4e531ec7f2ee253117fb617926",
+    "name": "第九届“强网”拟态防御国际精英挑战赛预选赛",
+    "startAt": "2026-10-31 10:00:00",
+    "endAt": "2026-11-01 12:00:00",
+    "timeStatus": 1,
+    "checkpointNum": 26
+  },
+  "summary": {
+    "visible": 24,
+    "solved": 18,
+    "points": 7555,
+    "capturedAcceptedFlags": 14
+  },
+  "challenges": [
+    {
+      "id": "a11f931bbcdc666c3460ea12f740b598",
+      "title": "SSignature",
+      "direction": "Crypto",
+      "category": "crypto",
+      "points": 818,
+      "solvedCount": 61,
+      "isSolved": false,
+      "taskId": "task-9b78140d",
+      "taskStatus": "solving",
+      "acceptedFlags": [],
+      "candidateCount": 1
+    },
+    {
+      "id": "a8cee8a6f82b89bbd08ccb16338b7a7c",
+      "title": "deep-channel",
+      "direction": "Misc",
+      "category": "misc",
+      "points": 598,
+      "solvedCount": 145,
+      "isSolved": false,
+      "taskId": "task-6cf8b9fd",
+      "taskStatus": "solving",
+      "acceptedFlags": [],
+      "candidateCount": 1
+    },
+    {
+      "id": "4e9ce91eb4fb560e59ca5ebf4b196811",
+      "title": "GhostCockpit",
+      "direction": "Pwn",
+      "category": "pwn",
+      "points": 997,
+      "solvedCount": 2,
+      "isSolved": false,
+      "taskId": "task-a0ab887d",
+      "taskStatus": "solving",
+      "acceptedFlags": [],
+      "candidateCount": 0
+    },
+    {
+      "id": "148a00441b922129c2685d843894f6f8",
+      "title": "Handoff",
+      "direction": "Pwn",
+      "category": "pwn",
+      "points": 554,
+      "solvedCount": 164,
+      "isSolved": false,
+      "taskId": "task-4e9fef2c",
+      "taskStatus": "solving",
+      "acceptedFlags": [],
+      "candidateCount": 5
+    },
+    {
+      "id": "6166cde44fb47478799977fdee2e0cc2",
+      "title": "selfmod_vm",
+      "direction": "Reverse",
+      "category": "reverse",
+      "points": 1000,
+      "solvedCount": 0,
+      "isSolved": false,
+      "taskId": "task-4db6c29d",
+      "taskStatus": "solving",
+      "acceptedFlags": [],
+      "candidateCount": 1
+    },
+    {
+      "id": "dbc57ce1e6d61e4a8b3631d5f28d11c2",
+      "title": "Ingress Control",
+      "direction": "Web",
+      "category": "web",
+      "points": 543,
+      "solvedCount": 169,
+      "isSolved": false,
+      "taskId": "task-c57444db",
+      "taskStatus": "solving",
+      "acceptedFlags": [],
+      "candidateCount": 1
+    },
+    {
+      "id": "8fbc36e9e2e9b0858ac619b23d98a827",
+      "title": "Immobilizer",
+      "direction": "Crypto",
+      "category": "crypto",
+      "points": 478,
+      "solvedCount": 199,
+      "isSolved": true,
+      "taskId": "task-c70a394f",
+      "taskStatus": "solved",
+      "acceptedFlags": [
+        {
+          "value": "flag{top_byte_of_the_nonce}",
+          "evidence": "E2",
+          "submitStatus": null,
+          "firstSeen": 1793498791950,
+          "source": null
+        }
+      ],
+      "candidateCount": 1
+    },
+    {
+      "id": "c29222b343fc25c47598dade7a1d1c2a",
+      "title": "dropout",
+      "direction": "Crypto",
+      "category": "crypto",
+      "points": 380,
+      "solvedCount": 250,
+      "isSolved": true,
+      "taskId": "task-e519419f",
+      "taskStatus": "solved",
+      "acceptedFlags": [
+        {
+          "value": "flag{mask_seed_from_dropout}",
+          "evidence": "task-answer",
+          "submitStatus": "ok",
+          "firstSeen": 1793446647303,
+          "source": null
+        }
+      ],
+      "candidateCount": 3
+    },
+    {
+      "id": "8c2129b42e566f0c8ed3da7d060883ef",
+      "title": "Premaster",
+      "direction": "Crypto",
+      "category": "crypto",
+      "points": 378,
+      "solvedCount": 251,
+      "isSolved": true,
+      "taskId": null,
+      "taskStatus": null,
+      "acceptedFlags": [],
+      "candidateCount": 0
+    },
+    {
+      "id": "a07ff00ef5a4df6563fa91343045490b",
+      "title": "Off the Curve",
+      "direction": "Crypto",
+      "category": "crypto",
+      "points": 368,
+      "solvedCount": 257,
+      "isSolved": true,
+      "taskId": "task-5ef8cc4d",
+      "taskStatus": "solved",
+      "acceptedFlags": [
+        {
+          "value": "flag{m3OqSILqXQDmrd5yHI98cgoQ6q3JZe6M4arDmaEa}",
+          "evidence": "E2",
+          "submitStatus": null,
+          "firstSeen": 1793461057724,
+          "source": null
+        }
+      ],
+      "candidateCount": 3
+    },
+    {
+      "id": "c1dc6eb42c403b163de20a163543393c",
+      "title": "FilmReader",
+      "direction": "Misc",
+      "category": "misc",
+      "points": 480,
+      "solvedCount": 198,
+      "isSolved": true,
+      "taskId": "task-027c2b47",
+      "taskStatus": "solved",
+      "acceptedFlags": [
+        {
+          "value": "flag{n0_m0d3l_r34d5_7h15_d33p}",
+          "evidence": "E2",
+          "submitStatus": "ok",
+          "firstSeen": 1793501182505,
+          "source": null
+        }
+      ],
+      "candidateCount": 4
+    },
+    {
+      "id": "5149bdec646a7244f37361d468724b1a",
+      "title": "UAE",
+      "direction": "Misc",
+      "category": "misc",
+      "points": 417,
+      "solvedCount": 230,
+      "isSolved": true,
+      "taskId": "task-22bc9fda",
+      "taskStatus": "solved",
+      "acceptedFlags": [
+        {
+          "value": "flag{dr34m_0f_n01s3}",
+          "evidence": "E2",
+          "submitStatus": null,
+          "firstSeen": 1793468926818,
+          "source": null
+        }
+      ],
+      "candidateCount": 1
+    },
+    {
+      "id": "6394ba041994a50d94974683e37fd239",
+      "title": "Pickle-Me-Not",
+      "direction": "Misc",
+      "category": "misc",
+      "points": 385,
+      "solvedCount": 247,
+      "isSolved": true,
+      "taskId": "task-65033674",
+      "taskStatus": "solved",
+      "acceptedFlags": [
+        {
+          "value": "flag{5oXM93hnumDZYQQ48ed96uVK9usAFbsHuFJdeNnD}",
+          "evidence": "E2",
+          "submitStatus": null,
+          "firstSeen": 1793459618198,
+          "source": null
+        }
+      ],
+      "candidateCount": 9
+    },
+    {
+      "id": "264a35026bab91f3129f77c26ea12ace",
+      "title": "LLM Pipeline",
+      "direction": "Misc",
+      "category": "misc",
+      "points": 376,
+      "solvedCount": 252,
+      "isSolved": true,
+      "taskId": "task-1aac76d3",
+      "taskStatus": "solved",
+      "acceptedFlags": [
+        {
+          "value": "flag{k7XYBQAi5LAwEnII6RKmYngWBT2hcmJH1iIxw6Kg}",
+          "evidence": "E2",
+          "submitStatus": null,
+          "firstSeen": 1793464901643,
+          "source": null
+        }
+      ],
+      "candidateCount": 1
+    },
+    {
+      "id": "31dc3283c4d5c884658a062dc797bea7",
+      "title": "SilentWeights",
+      "direction": "Misc",
+      "category": "misc",
+      "points": 350,
+      "solvedCount": 267,
+      "isSolved": true,
+      "taskId": null,
+      "taskStatus": null,
+      "acceptedFlags": [
+        {
+          "value": "flag{w31ghts_d0nt_l13_but_th3y_wh1sp3r}",
+          "evidence": "E2",
+          "submitStatus": "ok",
+          "firstSeen": null,
+          "source": "模型 fc2.weight 的 float32 最低有效位流"
+        }
+      ],
+      "candidateCount": 0
+    },
+    {
+      "id": "40101cf0b7c8c71df7976fbef6856884",
+      "title": "Causal Mosaic",
+      "direction": "Misc",
+      "category": "misc",
+      "points": 301,
+      "solvedCount": 298,
+      "isSolved": true,
+      "taskId": null,
+      "taskStatus": null,
+      "acceptedFlags": [
+        {
+          "value": "flag{W3nxZB8RVy4tcddDVAvpHIo8}",
+          "evidence": "E2",
+          "submitStatus": "ok",
+          "firstSeen": null,
+          "source": "05-附件与流量/causal_detail.json"
+        }
+      ],
+      "candidateCount": 0
+    },
+    {
+      "id": "e6d2453165a65a67a52dd57273d046c4",
+      "title": "Pending Review",
+      "direction": "Pwn",
+      "category": "pwn",
+      "points": 525,
+      "solvedCount": 177,
+      "isSolved": true,
+      "taskId": "task-90b3dbf8",
+      "taskStatus": "solved",
+      "acceptedFlags": [
+        {
+          "value": "flag{Y2IocPvKVi7x5BQKH14XtwDIuL5tye0Vnl05rtNv}",
+          "evidence": "E2",
+          "submitStatus": "ok",
+          "firstSeen": 1793499198411,
+          "source": null
+        }
+      ],
+      "candidateCount": 2
+    },
+    {
+      "id": "50ab247f63d93110d140421127e348f0",
+      "title": "Smart Surveillance Camera - Remote PTZ Control",
+      "direction": "Pwn",
+      "category": "pwn",
+      "points": 521,
+      "solvedCount": 179,
+      "isSolved": true,
+      "taskId": "task-8eb4abca",
+      "taskStatus": "solved",
+      "acceptedFlags": [
+        {
+          "value": "flag{a99b94028914616a52ee3710af475836}",
+          "evidence": "E2",
+          "submitStatus": null,
+          "firstSeen": 1793495686347,
+          "source": null
+        }
+      ],
+      "candidateCount": 2
+    },
+    {
+      "id": "e1084567a30996a6e036e61af1f3158f",
+      "title": "SilGate",
+      "direction": "Pwn",
+      "category": "pwn",
+      "points": 476,
+      "solvedCount": 200,
+      "isSolved": true,
+      "taskId": null,
+      "taskStatus": null,
+      "acceptedFlags": [],
+      "candidateCount": 0
+    },
+    {
+      "id": "be0bb12083133bb56c3cd431b106abee",
+      "title": "Bootleg Update",
+      "direction": "Reverse",
+      "category": "reverse",
+      "points": 485,
+      "solvedCount": 196,
+      "isSolved": true,
+      "taskId": null,
+      "taskStatus": null,
+      "acceptedFlags": [],
+      "candidateCount": 0
+    },
+    {
+      "id": "7eb2116de1415e4e51ab24bb91db316f",
+      "title": "Wasmnesia",
+      "direction": "Reverse",
+      "category": "reverse",
+      "points": 415,
+      "solvedCount": 231,
+      "isSolved": true,
+      "taskId": "task-7c9cac8d",
+      "taskStatus": "solved",
+      "acceptedFlags": [
+        {
+          "value": "flag{DN72WGbTvmLJU9JVX1o9GWLE9DiSZdarl3ixBDao}",
+          "evidence": "E2",
+          "submitStatus": null,
+          "firstSeen": 1793467115513,
+          "source": null
+        }
+      ],
+      "candidateCount": 1
+    },
+    {
+      "id": "38b47fdf18a1ad9f25ab33e9b25abe86",
+      "title": "Undercurrent",
+      "direction": "Web",
+      "category": "web",
+      "points": 460,
+      "solvedCount": 208,
+      "isSolved": true,
+      "taskId": "task-38376538",
+      "taskStatus": "solved",
+      "acceptedFlags": [
+        {
+          "value": "flag{OnID0LXdWhQNFIRM47xSPKCbbAcr8TiQaSn8PnHd}",
+          "evidence": "E2",
+          "submitStatus": null,
+          "firstSeen": 1793469575424,
+          "source": null
+        }
+      ],
+      "candidateCount": 1
+    },
+    {
+      "id": "463d5f37fb67ff73a66a639851f18c91",
+      "title": "Ghost-in-the-Queue",
+      "direction": "Web",
+      "category": "web",
+      "points": 434,
+      "solvedCount": 221,
+      "isSolved": true,
+      "taskId": "task-4a36a071",
+      "taskStatus": "solved",
+      "acceptedFlags": [
+        {
+          "value": "flag{MyGyp8qmPOFVEpcqUcFUuCFkTxrlaMGxr7tqL076}",
+          "evidence": "E2",
+          "submitStatus": null,
+          "firstSeen": 1793463665427,
+          "source": null
+        }
+      ],
+      "candidateCount": 1
+    },
+    {
+      "id": "fd0f3709fcc32fc621a829b28ad2d7de",
+      "title": "Crossed Signals",
+      "direction": "Web",
+      "category": "web",
+      "points": 326,
+      "solvedCount": 282,
+      "isSolved": true,
+      "taskId": null,
+      "taskStatus": null,
+      "acceptedFlags": [],
+      "candidateCount": 0
+    }
+  ]
+}

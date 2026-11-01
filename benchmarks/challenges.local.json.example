@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "_comment": "P6-A 本地真题模板。复制为 benchmarks/challenges.local.json 后填入本地题面/附件/目标/expectedFlagFile；该 local 文件已被 .gitignore 排除，不要提交真 flag。",
+  "challenges": [
+    {
+      "id": "local-example-1",
+      "category": "misc",
+      "difficulty": "medium",
+      "brief": "本地真题占位：把真实 brief 写在这里。不要提交本文件；复制成 challenges.local.json 后再填。",
+      "attachments": [],
+      "targets": [],
+      "expectedFlagFile": "benchmarks/expected/example-local-1.txt",
+      "timeoutMs": 900000,
+      "maxSessions": 3
+    }
+  ]
+}

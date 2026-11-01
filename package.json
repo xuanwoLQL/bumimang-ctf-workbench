@@ -1,0 +1,115 @@
+{
+  "name": "bumimang",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "apps/desktop/src/main/electron/main.ts",
+  "author": "不迷茫",
+  "description": "不迷茫 — 本机多 agent 并行解题工作台",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "m1": "node apps/desktop/src/cli/m1.ts",
+    "smoke": "node apps/desktop/src/renderer/smoke.ts",
+    "probe": "node apps/desktop/src/cli/probe.ts",
+    "probe:delegate": "node apps/desktop/src/cli/probe-delegate.ts",
+    "verify:gate": "node apps/desktop/src/cli/verify-gate.ts",
+    "verify:gate-live": "node apps/desktop/src/cli/verify-gate-live.ts",
+    "verify:agent-permission": "node apps/desktop/src/cli/verify-agent-permission.ts",
+    "verify:permissions": "node apps/desktop/src/cli/verify-permissions.ts",
+    "verify:permission-autoallow": "node apps/desktop/src/cli/verify-permission-autoallow.ts",
+    "verify:mcp-live": "node apps/desktop/src/cli/verify-mcp-live.ts",
+    "verify:codex-mcp": "node apps/desktop/src/cli/verify-codex-mcp.ts",
+    "verify:briefing": "node apps/desktop/src/cli/verify-briefing.ts",
+    "verify:history": "node apps/desktop/src/cli/verify-history.ts",
+    "verify:migration": "node apps/desktop/src/cli/verify-migration.ts",
+    "verify:multitask": "node apps/desktop/src/cli/verify-multitask.ts",
+    "verify:skills": "node apps/desktop/src/cli/verify-skills.ts",
+    "verify:artifacts": "node apps/desktop/src/cli/verify-artifacts.ts",
+    "verify:scope": "node apps/desktop/src/cli/verify-scope.ts",
+    "verify:flags": "node apps/desktop/src/cli/verify-flags.ts",
+    "bench": "node apps/desktop/src/cli/bench.ts",
+    "bench:soak": "node apps/desktop/src/cli/bench-soak.ts",
+    "verify:bench": "node apps/desktop/src/cli/verify-bench.ts",
+    "verify:reliability": "node apps/desktop/src/cli/verify-reliability.ts",
+    "verify:awdir": "node apps/desktop/src/cli/verify-awdir.ts",
+    "verify:answers": "node apps/desktop/src/cli/verify-answers.ts",
+    "verify:strategy": "node apps/desktop/src/cli/verify-strategy.ts",
+    "verify:ir": "node apps/desktop/src/cli/verify-ir.ts",
+    "verify:ir-tools": "node apps/desktop/src/cli/verify-ir-tools.ts",
+    "verify:ir-real": "node apps/desktop/src/cli/verify-ir-real.ts",
+    "ab": "node apps/desktop/src/cli/verify-ab.ts",
+    "verify:arm-opencode": "node apps/desktop/src/cli/verify-arm-opencode.ts",
+    "verify:arm-codex": "node apps/desktop/src/cli/verify-arm-codex.ts",
+    "verify:dsh-live": "node apps/desktop/src/cli/verify-dsh-live.ts",
+    "verify:concurrency": "node apps/desktop/src/cli/verify-concurrency-and-blocked.ts",
+    "verify:r18": "node apps/desktop/src/cli/verify-r18.ts",
+    "verify:hardening": "node apps/desktop/src/cli/verify-hardening.ts",
+    "verify:all": "node apps/desktop/src/cli/verify-gate.ts && node apps/desktop/src/cli/verify-gate-live.ts && node apps/desktop/src/cli/verify-briefing.ts && node apps/desktop/src/cli/verify-concurrency-and-blocked.ts && node apps/desktop/src/cli/verify-history.ts && node apps/desktop/src/cli/verify-r18.ts && node apps/desktop/src/cli/verify-hardening.ts && node apps/desktop/src/renderer/smoke.ts && node apps/desktop/src/cli/verify-answers.ts && node apps/desktop/src/cli/verify-strategy.ts && node apps/desktop/src/cli/verify-ir.ts",
+    "pack": "electron-builder --win",
+    "pack:dir": "electron-builder --win --dir"
+  },
+  "build": {
+    "appId": "com.bumimang.app",
+    "productName": "不迷茫",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "apps/**/*",
+      "packages/**/*",
+      "package.json",
+      "!**/*.md",
+      "!**/.next/**",
+      "!**/node_modules/.cache/**",
+      "!apps/desktop/src/cli/**",
+      "!apps/desktop/src/renderer/smoke.ts",
+      "!benchmarks/**",
+      "!evidence/**",
+      "!docs/**",
+      "!.probe/**",
+      "!**/*.test.*",
+      "!**/__tests__/**",
+      "!**/benchmarks/**",
+      "!**/test/**",
+      "!**/tests/**"
+    ],
+    "extraResources": [
+      {
+        "from": "rules",
+        "to": "app-source/rules"
+      },
+      {
+        "from": "config",
+        "to": "app-source/config",
+        "filter": ["app.json", "permissions.json", "platform.json", "ir-tools.example.json"]
+      },
+      {
+        "from": "skill-builtin",
+        "to": "app-source/skill"
+      }
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false
+    },
+    "asar": true
+  },
+  "dependencies": {
+    "@agentclientprotocol/sdk": "^1.8.0",
+    "@modelcontextprotocol/sdk": "^1.32.1"
+  },
+  "devDependencies": {
+    "electron": "^44.7.0",
+    "electron-builder": "^26.15.3"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "Causal Mosaic": [
+    {
+      "value": "flag{W3nxZB8RVy4tcddDVAvpHIo8}",
+      "evidence": "E2",
+      "submitStatus": "ok",
+      "source": "05-附件与流量/causal_detail.json"
+    }
+  ],
+  "SilentWeights": [
+    {
+      "value": "flag{w31ghts_d0nt_l13_but_th3y_wh1sp3r}",
+      "evidence": "E2",
+      "submitStatus": "ok",
+      "source": "模型 fc2.weight 的 float32 最低有效位流"
+    }
+  ]
+}

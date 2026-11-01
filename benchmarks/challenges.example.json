@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "_comment": "P6-A 公开题占位清单。这里只放占位题，不含私有题与真实 flag；本地真题请复制 challenges.local.json.example 为 challenges.local.json（已 .gitignore）。",
+  "challenges": [
+    {
+      "id": "example-web-1",
+      "category": "web",
+      "difficulty": "easy",
+      "brief": "PLACEHOLDER ONLY：公开 Web 题占位。真实题请放在本地 challenges.local.json；不要把私有题/真 flag 写进本文件。",
+      "attachments": [],
+      "targets": [],
+      "expectedFlagFile": "benchmarks/expected/example-web-1.txt",
+      "expectedAnswerFile": "benchmarks/expected/example-web-1.txt",
+      "answerSpec": {
+        "mode": "flag_regex",
+        "pattern": "flag\\{[^}\\s]{3,256}\\}",
+        "answerType": "flag",
+        "requiredEvidence": "E1"
+      },
+      "resetMode": "manual",
+      "allowedTargets": [],
+      "forbiddenActions": ["submit", "open_challenge", "read_token"],
+      "agent": "claude",
+      "role": "lead",
+      "tier": "guarded",
+      "budget": { "tokens": null, "wallMs": 900000 },
+      "timeoutMs": 900000,
+      "maxSessions": 3
+    },
+    {
+      "id": "example-misc-1",
+      "category": "misc",
+      "difficulty": "medium",
+      "brief": "PLACEHOLDER ONLY：公开 Misc/取证题占位。真实题请放在本地 challenges.local.json。",
+      "attachments": [],
+      "targets": [],
+      "expectedFlagFile": "benchmarks/expected/example-misc-1.txt",
+      "timeoutMs": 1200000,
+      "maxSessions": 3
+    },
+    {
+      "id": "example-crypto-1",
+      "category": "crypto",
+      "difficulty": "hard",
+      "brief": "PLACEHOLDER ONLY：公开 Crypto 题占位。真实题请放在本地 challenges.local.json。",
+      "attachments": [],
+      "targets": [],
+      "expectedFlagFile": "benchmarks/expected/example-crypto-1.txt",
+      "timeoutMs": 1800000,
+      "maxSessions": 3
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+UAE / Misc — flag 候选
+=====================
+
+QR 原始内容 (contact code):  dr34m_0f_n01s3
+候选 flag:                   flag{dr34m_0f_n01s3}
+
+恢复链路（可回放）
+------------------
+1) 附件 config.json 给出噪声布局:
+   x_T = G + P
+   G = Gaussian(carrier_seed=555)
+   P = QR payload(mask_seed=20261012) ; QR v2-H 25x25
+   module(r,c) -> 2x2 block at LOCS[r*25+c] (row-major, 256 blocks/ch0, 256/ch1, 113/ch2)
+   dark=-amp, light=+amp, amp=0.65, structural x1.25 ; per-pixel ±1 mask(seed)
+2) x_adv.npy (3x32x32) 经 sampler.py 的 GuidedDDIM.invert_fixedpoint 反演得到 x_T
+   （队友产物 work/x_T.npy, steps=1000, iters=3, guidance=classifier argmax=3/cat, scale=3.0）
+3) G = numpy.random.default_rng(555).standard_normal((3,32,32))     [与 x_T 相关 0.666]
+   mask = numpy.random.default_rng(20261012).integers(0,2,(3,32,32))*2-1
+   r = x_T - alpha*G ; q = r * mask ; 2x2 块均值 -> 25x25 矩阵 (inv=True: dark = q<0)
+4) 按 QR 规范修复功能图案(3 个定位/分隔/时序/校正/暗模块) 后:
+   cv2.QRCodeDetector().detectAndDecode -> "dr34m_0f_n01s3"
+   cv2.QRCodeDetectorAruco().detectAndDecode -> "dr34m_0f_n01s3"
+   alpha=0.5 与 alpha=0.6 两组独立参数均解出同一字符串。
+
+结构校验：3 个 7x7 定位图案 + 时序图案共 165 个模块，匹配 160 个（随机约 82）。
+
+关键命令回显
+------------
+evidence/qr_bruteforce_out.txt   结构暴力搜索，最优 160/165
+evidence/qr_decode_out.txt       25x25 矩阵 ASCII
+evidence/qr_fix_decode_out.txt   修复功能图案后的 cv2 解码输出
+evidence/qrfix_a0.6_inv1.png     解码成功的 QR 渲染图
+
+信号统计
+--------
+work/x_T.npy 反演结果 mean=-0.013 std=0.974
+residual(x_T - 0.6*G) 经 mask 消去后 2x2 块均值在 ±0.65 附近分簇，QR 结构可辨。

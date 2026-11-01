@@ -1,0 +1,44 @@
+{
+  "id": "dev",
+  "name": "开发包",
+  "description": "几乎全放行，只拦最危险的几类。适合本地开发与调试。",
+  "rules": [
+    {
+      "_comment": "置顶放行黑板工具：内部状态不走审批（§5.1 约定 3）。否则 guarded 档会拦掉每一次 blackboard_* 调用。",
+      "id": "blackboard-tools-are-internal",
+      "match": {
+        "action": "session/request_permission",
+        "text_regex": "(mcp__blackboard__|blackboard_read_since|blackboard_submit_fact|blackboard_declare_dead_end|blackboard_query_view|blackboard_acquire_lease|blackboard_release_lease|blackboard_open_intent)"
+      },
+      "verdict": "allow",
+      "reason": "黑板工具是内部状态，不走人工审批（§5.1 约定 3）"
+    },
+    {
+      "id": "no-c2-tools",
+      "match": {
+        "action": "terminal/exec",
+        "command_regex": "(cobaltstrike|cobalt_strike|beacon\\.exe|sliver-server|sliver-client|empire-server)"
+      },
+      "verdict": "block",
+      "reason": "开发环境也不允许起 C2"
+    },
+    {
+      "id": "no-c2-tools-via-permission",
+      "match": {
+        "action": "session/request_permission",
+        "text_regex": "(cobaltstrike|cobalt_strike|beacon\\.exe|sliver-server|sliver-client|empire-server)"
+      },
+      "verdict": "block",
+      "reason": "开发环境也不允许起 C2（经权限请求通道）"
+    },
+    {
+      "id": "destructive-fs-needs-human",
+      "match": {
+        "action": "session/request_permission",
+        "text_regex": "(rm -rf|format |diskpart)"
+      },
+      "verdict": "approve",
+      "reason": "破坏性操作问一下"
+    }
+  ]
+}

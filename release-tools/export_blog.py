@@ -216,6 +216,8 @@ def project_page(blog: Path, images: dict[str, str], github_url: str) -> None:
         "排行榜截图第 157 名、7547 分；本地保留并确认 14 个 flag 原文。"
         "全部 18 题 WP 已按方向发布，证据不足的题目明确标注缺口。\n\n"
         "## 快速开始\n\n"
+        "- [Windows 便携版](https://github.com/xuanwoLQL/bumimang-ctf-workbench/releases/download/v0.1.0/bumimang-0.1.0-portable.exe)\n"
+        "- [Windows 安装版](https://github.com/xuanwoLQL/bumimang-ctf-workbench/releases/download/v0.1.0/bumimang-0.1.0-setup.exe)\n\n"
         "```powershell\n"
         f"git clone {github_url}.git\n"
         "cd bumimang-ctf-workbench\n"

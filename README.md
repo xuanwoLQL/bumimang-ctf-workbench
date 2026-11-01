@@ -64,6 +64,18 @@ flowchart LR
 
 ## 快速开始
 
+### 下载 Windows 构建
+
+- [便携版 `bumimang-0.1.0-portable.exe`](https://github.com/xuanwoLQL/bumimang-ctf-workbench/releases/download/v0.1.0/bumimang-0.1.0-portable.exe)
+- [安装版 `bumimang-0.1.0-setup.exe`](https://github.com/xuanwoLQL/bumimang-ctf-workbench/releases/download/v0.1.0/bumimang-0.1.0-setup.exe)
+
+构建产物使用脱敏示例配置，不包含平台账号、密码、DES key、JWT 或靶机地址。
+
+```text
+portable SHA256 2f384ce2a6eb017ece37a139e591d37cbe9556b3f5f47cc0cb329912816e9fea
+setup    SHA256 353a77ba24b4c37dfb54eee37512c668f3360875ed8d96131c11c43498cff8fd
+```
+
 ### 依赖
 
 - Windows 10/11 x64

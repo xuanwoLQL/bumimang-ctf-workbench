@@ -10,6 +10,5 @@
   "autoConnect": false,
   "autoSync": false,
   "autoSubmit": false,
-  "syncIntervalSeconds": 30,
-  "wpDir": "../writeups"
+  "syncIntervalSeconds": 30
 }

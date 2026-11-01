@@ -1,6 +1,5 @@
 {
   "version": 1,
-  "workDir": "../work",
   "maxSessionsPerTask": 4,
   "maxSessionsTotal": 12,
   "skill": {
@@ -18,8 +17,7 @@
     "autoConnect": false,
     "autoSync": false,
     "autoSubmit": false,
-    "syncIntervalSeconds": 30,
-    "wpDir": "../writeups"
+    "syncIntervalSeconds": 30
   },
   "scope": {
     "enabled": false,
